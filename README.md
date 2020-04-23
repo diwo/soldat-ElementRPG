@@ -24,6 +24,10 @@ If you just want to play it on a public server, join:
    experience ElementRPG as it is intended.
    * Copy `weapons.ini` into the top level directory of your server
 
+# Screenshot
+
+<img src="./res/screenshot.jpg" />
+
 # Support
 
 If you need help setting up your own server, join the [Official Soldat
