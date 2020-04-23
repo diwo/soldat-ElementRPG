@@ -3,6 +3,9 @@
 ElementRPG is an game mod for [Soldat](https://www.soldat.pl/) where players
 can level up and acquire abilities to enhance their combat abilities.
 
+If you just want to play it on a public server, join:
+`soldat://dickson.io:23073/`
+
 # Installation
 
 1. Copy or symlink the `scripts/ElementRPG/` directory into the `scripts/`
@@ -20,3 +23,8 @@ can level up and acquire abilities to enhance their combat abilities.
    around this weapons mod. It is recommended to use it if you want to
    experience ElementRPG as it is intended.
    * Copy `weapons.ini` into the top level directory of your server
+
+# Support
+
+If you need help setting up your own server, join the [Official Soldat
+Discord](https://discordapp.com/invite/soldat)
