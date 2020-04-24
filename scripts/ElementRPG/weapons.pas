@@ -24,7 +24,7 @@ end;
 
 function WeaponDamageAdjustAk74(damage, dist: Single): Single;
 begin
-  result := damage * InterpolateLinear(1, 3, 150, 450, dist);
+  result := damage * InterpolateLinear(1, 4, 150, 450, dist);
 end;
 
 function WeaponDamageAdjustSpas(damage, dist: Single): Single;
