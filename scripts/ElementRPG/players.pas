@@ -153,7 +153,9 @@ end;
 
 function GetMaxHP(var player: TActivePlayer): Single;
 begin
-  result := 350 + (PlayersData[player.ID].level - 1) * 6;
+  if player.human
+    then result := 350 + (PlayersData[player.ID].level - 1) * 6
+    else result := 200;
 end;
 
 procedure RefreshPlayerHP(player: TActivePlayer);

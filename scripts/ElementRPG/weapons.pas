@@ -16,8 +16,8 @@ function WeaponDamageAdjustDeagles(
   damage: Single; ammo: Integer;
   const player: TActivePlayer): Single;
 begin
-  result := damage * 35;
-  if ammo = 0 then result := result * 1.5;
+  result := Min(damage, 5.0) * 25;
+  if ammo = 0 then result := result * 2;
   // Gets rid of deagles 3rd hit, normalizes flame shield behavior
   Map.CreateBullet(5000, 5000, 1, 1, 0, BULLET_KNIFE, player);
 end;

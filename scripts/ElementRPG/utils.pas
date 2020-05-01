@@ -141,8 +141,8 @@ begin
   case wType of
     WTYPE_EAGLE: result := 3;
     WTYPE_MP5: result := 80;
-    WTYPE_AK74: result := 3;
-    WTYPE_STEYRAUG: result := 20;
+    WTYPE_AK74: result := 5;
+    WTYPE_STEYRAUG: result := 40;
     WTYPE_SPAS12: result := 5;
     WTYPE_RUGER77: result := 2;
     WTYPE_M79: result := 5;
