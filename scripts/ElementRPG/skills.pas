@@ -375,22 +375,22 @@ begin
   end;
 end;
 
-procedure UseSoulReap(player: TActivePlayer);
+procedure UseBloodRitual(player: TActivePlayer);
 var
   rank, cd, cdRemain: Integer;
   hpPercent, hpAmount: Single;
 begin
-  rank := PlayersData[player.ID].skillRanks[SKILL_SOUL_REAP];
+  rank := PlayersData[player.ID].skillRanks[SKILL_BLOOD_RITUAL];
 
   if (rank > 0) and (player.Primary.WType <> WTYPE_NOWEAPON) then
   begin
-    cd := CooldownTicks(player, SKILL_SOUL_REAP);
-    cdRemain := CooldownTicksRemaining(player, SKILL_SOUL_REAP);
+    cd := CooldownTicks(player, SKILL_BLOOD_RITUAL);
+    cdRemain := CooldownTicksRemaining(player, SKILL_BLOOD_RITUAL);
 
     if cdRemain <= 0 then
     begin
-      SetSkillLastUsedTick(player, SKILL_SOUL_REAP);
-      hpPercent := RankInterpolate(5, 20, SKILL_SOUL_REAP, rank);
+      SetSkillLastUsedTick(player, SKILL_BLOOD_RITUAL);
+      hpPercent := RankInterpolate(5, 20, SKILL_BLOOD_RITUAL, rank);
 
       player.Primary.Ammo := GetWeaponMaxAmmo(player.Primary.WType);
 
@@ -408,8 +408,39 @@ begin
       FillScreen(player, LAYER_SOUL_REAP, 60/2, $2214C948);
 
       player.WriteConsole(
-        'You activated Soul Reap to replenish ammo and some health' +
+        'You activated Blood Ritual to replenish ammo and some health' +
         ' (cooldown ' + IntToStr(cd/60) + 's)', WHITE);
+    end;
+  end;
+end;
+
+procedure UseSoulReap(player: TActivePlayer);
+var
+  rank, cd, cdRemain: Integer;
+  ticksSinceLast, reduction, i: Integer;
+begin
+  rank := PlayersData[player.ID].skillRanks[SKILL_SOUL_REAP];
+
+  if rank > 0 then
+  begin
+    cd := CooldownTicks(player, SKILL_SOUL_REAP);
+    cdRemain := CooldownTicksRemaining(player, SKILL_SOUL_REAP);
+
+    if cdRemain <= 0 then
+    begin
+      ticksSinceLast := TicksSinceSkillUsed(player, SKILL_SOUL_REAP);
+      SetSkillLastUsedTick(player, SKILL_SOUL_REAP);
+
+      reduction := 5*60;
+      if ticksSinceLast >= 0 then
+        reduction := Trunc(InterpolateLinear(0, reduction, 0, 30*60, ticksSinceLast));
+
+      for i := 1 to SKILLS_LENGTH do
+        ReduceSkillCooldown(player, i, reduction);
+
+      player.WriteConsole(
+        'You activated Soul Reap to reduce skill cooldowns by ' +
+        FloatToStrTrunc(reduction/60.0, 1) + 's', WHITE);
     end;
   end;
 end;

@@ -7,6 +7,7 @@ uses
 
 var
   SkillLastUsedTick: Array[1..32] of Array[1..SKILLS_LENGTH] of Integer;
+  SkillCooldownReduction: Array[1..32] of Array[1..SKILLS_LENGTH] of Integer;
 
 function CooldownTicks(var player: TActivePlayer; skill: Integer): Integer;
 begin
@@ -17,10 +18,12 @@ end;
 
 function CooldownTicksRemaining(var player: TActivePlayer; skill: Integer): Integer;
 var
-  elapsed, cd: Integer;
+  elapsed, cd, reduction: Integer;
 begin
   elapsed := LastTick - SkillLastUsedTick[player.ID][skill];
   cd := CooldownTicks(player, skill);
+  reduction := SkillCooldownReduction[player.ID][skill];
+  cd := cd - reduction;
   if (SkillLastUsedTick[player.ID][skill] > 0) and (elapsed < cd)
     then result := cd - elapsed
     else result := 0;
@@ -66,12 +69,19 @@ end;
 procedure SetSkillLastUsedTick(var player: TActivePlayer; skill: Integer);
 begin
   SkillLastUsedTick[player.ID][skill] := LastTick;
+  SkillCooldownReduction[player.ID][skill] := 0;
   RefreshPlayerCooldowns(player);
+end;
+
+procedure ReduceSkillCooldown(var player: TActivePlayer; skill, reduction: Integer);
+begin
+  SkillCooldownReduction[player.ID][skill] := SkillCooldownReduction[player.ID][skill] + reduction;
 end;
 
 procedure ResetCooldown(player: TActivePlayer; skill: Integer);
 begin
   SkillLastUsedTick[player.ID][skill] := 0;
+  SkillCooldownReduction[player.ID][skill] := 0;
   RefreshPlayerCooldowns(player);
 end;
 
@@ -89,7 +99,10 @@ var
 begin
   for i := 1 to 32 do
     for j := 1 to SKILLS_LENGTH do
+    begin
       SkillLastUsedTick[i][j] := 0;
+      SkillCooldownReduction[i][j] := 0;
+    end;
 end;
 
 begin
