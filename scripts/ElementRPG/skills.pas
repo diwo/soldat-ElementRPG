@@ -393,6 +393,12 @@ begin
       hpPercent := RankInterpolate(5, 20, SKILL_BLOOD_RITUAL, rank);
 
       player.Primary.Ammo := GetWeaponMaxAmmo(player.Primary.WType);
+      if player.Secondary.WType <> WTYPE_NOWEAPON then
+      begin
+        player.ForceWeapon(player.Secondary, player.Primary);
+        player.Primary.Ammo := GetWeaponMaxAmmo(player.Primary.WType);
+        player.ForceWeapon(player.Secondary, player.Primary);
+      end;
 
       hpAmount := GetMaxHP(player) * hpPercent / 100.0;
       if PlayersData[player.ID].hp + hpAmount < GetMaxHP(player) then
