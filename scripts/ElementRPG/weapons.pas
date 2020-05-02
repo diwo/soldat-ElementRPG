@@ -57,7 +57,7 @@ function WeaponDamageAdjustLaw(
   damage: Single; const player, victim: TActivePlayer): Single;
 begin
   result := damage;
-  if player = victim then result := result * 50;
+  if player = victim then result := result * 40;
 end;
 
 function WeaponDamageAdjust(
