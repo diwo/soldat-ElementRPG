@@ -431,9 +431,9 @@ begin
       ticksSinceLast := TicksSinceSkillUsed(player, SKILL_SOUL_REAP);
       SetSkillLastUsedTick(player, SKILL_SOUL_REAP);
 
-      reduction := 5*60;
+      reduction := Trunc(RankInterpolate(1*60, 10*60, SKILL_SOUL_REAP, rank));
       if ticksSinceLast >= 0 then
-        reduction := Trunc(InterpolateLinear(0, reduction, 0, 30*60, ticksSinceLast));
+        reduction := Trunc(InterpolateLinear(0, reduction, 0, 60*60, ticksSinceLast));
 
       for i := 1 to SKILLS_LENGTH do
         ReduceSkillCooldown(player, i, reduction);
