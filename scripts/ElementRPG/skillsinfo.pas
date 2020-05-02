@@ -55,7 +55,7 @@ begin
   InitSkill(SKILL_MAGNETIC_GRASP,     'MagneticGrasp',     10, 30,  10, true,  true,  'Pull enemies towards you on damage');
   InitSkill(SKILL_BLINDING_FLASH,     'BlindingFlash',     10, 90,  45, true,  true,  'Blind enemies on damage');
   InitSkill(SKILL_SHOCK,              'Shock',             10, 90,  45, true,  true,  'Disarm nearby enemies on damage');
-  InitSkill(SKILL_STORM_CHARGE,       'StormCharge',       10, 90,  45, true,  true,  'Teleport to enemies on damage');
+  InitSkill(SKILL_STORM_CHARGE,       'StormCharge',       10, 90,  30, true,  true,  'Teleport to enemies on damage');
   InitSkill(SKILL_NOVA,               'Nova',              10, 90,  30, true,  true,  'Create an explosion on death');
   // Defensive
   InitSkill(SKILL_BARKSKIN,           'Barkskin',          10, 0,   0,  false, true,  'Reduce damage taken');
@@ -65,8 +65,8 @@ begin
   InitSkill(SKILL_FLAME_BARRIER,      'FlameBarrier',      10, 0,   0,  false, true,  'Burn enemy on damage taken');
   InitSkill(SKILL_HEALING_BREEZE,     'HealingBreeze',     10, 0,   0,  false, true,  'Gradually regenerate health');
   // Utility
-  InitSkill(SKILL_SOUL_REAP,          'SoulReap',          10, 90,  15, true,  true,  'Replenish ammo and some health on kill');
-  InitSkill(SKILL_TIMESTOP,           'Timestop',          10, 120, 60, true,  true,  'Slow time on weapon change');
+  InitSkill(SKILL_SOUL_REAP,          'SoulReap',          10, 60,  10, true,  true,  'Replenish ammo and some health on kill');
+  InitSkill(SKILL_TIMESTOP,           'Timestop',          10, 120, 45, true,  true,  'Slow time on weapon change');
   InitSkill(SKILL_GUST,               'Gust',              10, 30,  5,  true,  false, 'Active skill to boost movement. See ''/help gust''');
 end;
 

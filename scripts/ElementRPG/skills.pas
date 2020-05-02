@@ -344,8 +344,8 @@ begin
 
   if (rank > 0) and (player <> shooter) then
   begin
-    flameDamage := RankInterpolate(2, 8, SKILL_FLAME_BARRIER, rank);
-    flameDamage := InterpolateLinear(flameDamage/3, flameDamage, 0, 300, damage);
+    flameDamage := RankInterpolate(5, 15, SKILL_FLAME_BARRIER, rank);
+    flameDamage := InterpolateQuadratic(flameDamage/5, flameDamage, 0, 300, damage);
 
     Map.CreateBullet(
       shooter.x, shooter.y,
