@@ -451,6 +451,11 @@ begin
   end;
 end;
 
+function TimestopDuration(rank: Integer): Integer;
+begin
+  result := Trunc(RankInterpolate(1*60, 3*60, SKILL_TIMESTOP, rank));
+end;
+
 function UseTimestop(var player: TActivePlayer): Integer;
 var
   rank, cd, cdRemain, duration, i: Integer;
@@ -467,7 +472,7 @@ begin
     if cdRemain <= 0 then
     begin
       SetSkillLastUsedTick(player, SKILL_TIMESTOP);
-      duration := Trunc(RankInterpolate(1*60, 3*60, SKILL_TIMESTOP, rank));
+      duration := TimestopDuration(rank);
 
       Game.Gravity := GRAVITY_NORMAL / 10.0;
 
@@ -485,6 +490,23 @@ begin
 
       result := duration;
     end;
+  end;
+end;
+
+function ApplyTimestopDamage(var player: TActivePlayer; damage: Single): Single;
+var
+  rank, duration, ticksSinceLast: Integer;
+begin
+  result := damage;
+  rank := PlayersData[player.ID].skillRanks[SKILL_TIMESTOP];
+
+  if rank > 0 then
+  begin
+    duration := TimestopDuration(rank);
+    ticksSinceLast := TicksSinceSkillUsed(player, SKILL_TIMESTOP);
+    // may end prematurely due to ticks updating once per second
+    if (ticksSinceLast >= 0) and (ticksSinceLast < duration) then
+      result := result * RankInterpolate(1.1, 2.0, SKILL_TIMESTOP, rank);
   end;
 end;
 

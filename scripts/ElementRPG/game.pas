@@ -61,6 +61,7 @@ begin
   UseBlindingFlash(shooter, victim);
   UseShock(shooter, victim);
 
+  dmgAdjusted := ApplyTimestopDamage(shooter, dmgAdjusted);
   dmgAdjusted := ApplyBarkskin(victim, dmgAdjusted);
   if victim = shooter then
     dmgAdjusted := ApplyEarthenEmbrace(victim, dmgAdjusted);
