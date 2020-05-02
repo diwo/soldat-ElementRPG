@@ -437,7 +437,7 @@ begin
       ticksSinceLast := TicksSinceSkillUsed(player, SKILL_SOUL_REAP);
       SetSkillLastUsedTick(player, SKILL_SOUL_REAP);
 
-      reduction := Trunc(RankInterpolate(1*60, 10*60, SKILL_SOUL_REAP, rank));
+      reduction := Trunc(RankInterpolate(5*60, 15*60, SKILL_SOUL_REAP, rank));
       if ticksSinceLast >= 0 then
         reduction := Trunc(InterpolateLinear(0, reduction, 0, 60*60, ticksSinceLast));
 

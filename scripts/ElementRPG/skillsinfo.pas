@@ -66,8 +66,8 @@ begin
   InitSkill(SKILL_FLAME_BARRIER,      'FlameBarrier',      10, 0,   0,  false, true,  'Burn enemy on damage taken');
   InitSkill(SKILL_HEALING_BREEZE,     'HealingBreeze',     10, 0,   0,  false, true,  'Gradually regenerate health');
   // Utility
-  InitSkill(SKILL_BLOOD_RITUAL,       'BloodRitual',       10, 60,  10, true,  true,  'Replenish ammo and some health on kill');
-  InitSkill(SKILL_SOUL_REAP,          'SoulReap',          10, 1,   1,  false, true,  'Reduce cooldowns on kill');
+  InitSkill(SKILL_BLOOD_RITUAL,       'BloodRitual',       10, 60,  12, true,  true,  'Replenish ammo and some health on kill');
+  InitSkill(SKILL_SOUL_REAP,          'SoulReap',          10, 10,  10, false, true,  'Reduce cooldowns on kill');
   InitSkill(SKILL_TIMESTOP,           'Timestop',          10, 120, 45, true,  true,  'Slow time on weapon change');
   InitSkill(SKILL_GUST,               'Gust',              10, 30,  5,  true,  false, 'Active skill to boost movement. See ''/help gust''');
 end;
