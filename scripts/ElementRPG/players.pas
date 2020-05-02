@@ -35,7 +35,7 @@ var
   x: Double;
 begin
   x := (level - 1) / 8.0;
-  result := Trunc((Pow(E, x) - 1) * 1300);
+  result := Trunc((Pow(E, x) - 1) * 1300) + 1;
 end;
 
 function LevelSkillPoints(level: Integer): Integer;
@@ -43,12 +43,17 @@ begin
   result := level - 1;
 end;
 
+function GetCurrentExp(var player: TActivePlayer): Integer;
+begin
+  result := PlayersData[player.ID].exp + PlayersData[player.ID].expBoost;
+end;
+
 function GetExpToNextLevel(var player: TActivePlayer): Integer;
 var
   nextExp: Integer;
 begin
   nextExp := LevelExp(PlayersData[player.ID].level + 1);
-  result := nextExp - PlayersData[player.ID].exp;
+  result := nextExp - GetCurrentExp(player);
 end;
 
 function GetExpPercentToNextLevel(var player: TActivePlayer): Integer;
@@ -57,7 +62,7 @@ var
 begin
   prevExp := LevelExp(PlayersData[player.ID].level);
   nextExp := LevelExp(PlayersData[player.ID].level + 1);
-  result := (PlayersData[player.ID].exp - prevExp) * 100 / (nextExp - prevExp);
+  result := (GetCurrentExp(player) - prevExp) * 100 / (nextExp - prevExp);
 end;
 
 function GetUnassignedSkillPoints(var player: TActivePlayer): Integer;
@@ -405,7 +410,7 @@ begin
   prevLevel := PlayersData[player.ID].level;
 
   PlayersData[player.ID].exp := PlayersData[player.ID].exp + exp;
-  PlayersData[player.ID].level := ExpLevel(PlayersData[player.ID].exp);
+  PlayersData[player.ID].level := ExpLevel(GetCurrentExp(player));
 
   HudUpdateLevel(
     player,
@@ -419,6 +424,19 @@ begin
     HudShowLevelUp(player);
     AutoDistributeSkillPoints(player);
     RefreshPlayerUI(player);
+  end;
+end;
+
+procedure BoostPlayer(player: TActivePlayer; targetLevel: Integer);
+begin
+  if player.Active and player.Human and
+     (PlayersData[player.ID].level < targetLevel) then
+  begin
+    PlayersData[player.ID].expBoost := LevelExp(targetLevel) - PlayersData[player.ID].exp;
+    GrantExp(player, 0);
+    player.WriteConsole(
+      'You have been boosted to level ' + IntToStr(PlayersData[player.ID].level) +
+      ' by an admin!', YELLOW);
   end;
 end;
 
@@ -442,7 +460,8 @@ begin
   PlayersData[player.ID].expBanked :=
     PlayersData[player.ID].expBanked + PlayersData[player.ID].exp;
   PlayersData[player.ID].exp := 0;
-  PlayersData[player.ID].level := ExpLevel(PlayersData[player.ID].exp);
+  PlayersData[player.ID].expBoost := 0;
+  PlayersData[player.ID].level := 1;
   PlayersData[player.ID].manual := false;
   PlayersData[player.ID].rebirth := true;
   for i := 1 to SKILLS_LENGTH do
@@ -464,8 +483,8 @@ begin
   begin
     saveData.name := player.Name;
     saveData.hwid := player.HWID;
-    saveData.level := PlayersData[player.ID].level;
     saveData.exp := PlayersData[player.ID].exp + PlayersData[player.ID].expBanked;
+    saveData.level := ExpLevel(saveData.exp);
     saveData.manual := PlayersData[player.ID].manual;
 
     for i := 1 to SKILLS_LENGTH do
@@ -496,6 +515,7 @@ begin
   PlayersData[player.ID].exp := saveData.exp;
   PlayersData[player.ID].level := ExpLevel(PlayersData[player.ID].exp);
   PlayersData[player.ID].expBanked := 0;
+  PlayersData[player.ID].expBoost := 0;
   PlayersData[player.ID].manual := saveData.manual;
   PlayersData[player.ID].rebirth := false;
 

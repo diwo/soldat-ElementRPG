@@ -71,7 +71,7 @@ const
 type
   TPlayerData = record
     player: TActivePlayer;
-    level, exp, expBanked, assignedSp: Integer;
+    level, exp, expBanked, expBoost, assignedSp: Integer;
     hp: Single;
     manual, rebirth: Boolean;
     skillRanks: Array[1..SKILLS_LENGTH] of Integer;

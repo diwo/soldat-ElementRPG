@@ -188,6 +188,40 @@ begin
   end;
 end;
 
+procedure CmdBoost(var player: TActivePlayer; var args: Array of String);
+var
+  playerNum, targetLevel, i: Integer;
+begin
+  if player.IsAdmin then
+  begin
+    try
+      targetLevel := StrToInt(args[2]);
+
+      if LowerCase(args[1]) = 'all' then
+      begin
+        for i := 1 to 32 do
+          BoostPlayer(Players[i], targetLevel);
+        player.WriteConsole('You boosted everyone to level ' + IntToStr(targetLevel), YELLOW);
+      end
+      else begin
+        playerNum := StrToInt(args[1]);
+
+        if Players[playerNum].Active and Players[playerNum].human then
+        begin
+          BoostPlayer(Players[playerNum], targetLevel);
+          player.WriteConsole(
+            'You boosted ' + Players[playerNum].Name +
+            ' to level ' + IntToStr(targetLevel), YELLOW);
+        end;
+      end;
+      exit;
+    except end;
+
+    player.WriteConsole('Usage: /boost PLAYER_NUM TARGET_LEVEL', ORANGE);
+    player.WriteConsole('       /boost all  TARGET_LEVEL', ORANGE);
+  end;
+end;
+
 function HandleOnCommand(var player: TActivePlayer; cmd: String): Boolean;
 var
   args: Array of String;
@@ -210,6 +244,7 @@ begin
     '/save': CmdSave(player);
     '/resetcd': CmdResetCd(player);
     '/bot': CmdBot(player, args);
+    '/boost': CmdBoost(player, args);
   else
     result := false;
   end;
