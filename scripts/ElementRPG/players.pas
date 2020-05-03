@@ -426,14 +426,18 @@ begin
 end;
 
 procedure BoostPlayer(player: TActivePlayer; targetLevel: Integer);
+var
+  targetLevelCapped: Integer;
 begin
+  targetLevelCapped := Trunc(Min(targetLevel, 100));
+
   if player.Active and player.Human and
-     (PlayersData[player.ID].level < targetLevel) then
+     (PlayersData[player.ID].level < targetLevelCapped) then
   begin
-    PlayersData[player.ID].expBoost := LevelExp(targetLevel) - PlayersData[player.ID].exp;
+    PlayersData[player.ID].expBoost := LevelExp(targetLevelCapped) - PlayersData[player.ID].exp;
     GrantExp(player, 0);
     player.WriteConsole(
-      'You have been boosted to level ' + IntToStr(PlayersData[player.ID].level) +
+      'You have been temporarily boosted to level ' + IntToStr(PlayersData[player.ID].level) +
       ' by an admin!', YELLOW);
   end;
 end;
