@@ -218,7 +218,7 @@ begin
     except end;
 
     player.WriteConsole('Usage: /boost PLAYER_NUM TARGET_LEVEL', ORANGE);
-    player.WriteConsole('       /boost all  TARGET_LEVEL', ORANGE);
+    player.WriteConsole('       /boost all TARGET_LEVEL', ORANGE);
   end;
 end;
 
