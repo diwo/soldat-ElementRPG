@@ -11,20 +11,28 @@ begin
   WriteLn('/players');
 end;
 
-procedure TCPCmdPlayers();
+procedure TCPCmdPlayers(var args: Array of String);
 var
+  showSkills: Boolean;
   i, j: Integer;
   ids: Array of Integer;
 begin
+  showSkills := false;
+  try
+    if LowerCase(args[1]) = 'skills' then
+      showSkills := true;
+  except end;
+
   ids := GetActivePlayersSorted();
 
   WriteLn('Current players:');
   for i := 0 to Length(ids) - 1 do
   begin
-    WriteLn(GetPlayerSummary(ids[i]));
-    for j := 1 to SKILLS_LENGTH do
-      if PlayersData[ids[i]].skillRanks[j] > 0 then
-        WriteLn('  ' + GetPlayerSkill(Players[ids[i]], j));
+    WriteLn(IntToStr(ids[i]) + ': ' + GetPlayerSummary(ids[i]));
+    if showSkills then
+      for j := 1 to SKILLS_LENGTH do
+        if PlayersData[ids[i]].skillRanks[j] > 0 then
+          WriteLn('  ' + GetPlayerSkill(Players[ids[i]], j));
   end;
 end;
 
@@ -68,7 +76,7 @@ begin
 
   case LowerCase(args[0]) of
     '/help': TCPCmdHelp();
-    '/players': TCPCmdPlayers();
+    '/players': TCPCmdPlayers(args);
     '/boost': TCPCmdBoost(args);
   end;
 end;

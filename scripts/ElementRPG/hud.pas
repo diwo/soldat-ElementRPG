@@ -259,11 +259,11 @@ begin
     layer := layer + 1;
 
     text := Copy(playersInfo[i].name, 1, 15);
-    if playersInfo[i].manual then
+    if playersInfo[i].rebirth then
       text := text + '*';
     text := text + ' (Lv ' + IntToStr(playersInfo[i].level) + ')';
 
-    if playersInfo[i].rebirth
+    if playersInfo[i].manual
       then color := YELLOW
       else color := WHITE;
 

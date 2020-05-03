@@ -43,7 +43,7 @@ begin
   result := level - 1;
 end;
 
-function GetCurrentExp(var player: TActivePlayer): Integer;
+function GetCurrentExp(player: TActivePlayer): Integer;
 begin
   result := PlayersData[player.ID].exp + PlayersData[player.ID].expBoost;
 end;
@@ -88,22 +88,20 @@ var
   i, j, count, tmp: Integer;
   ids, exps: Array of Integer;
 begin
-  count := 0;
-  for i := 1 to 32 do
-    if Players[i].Active and Players[i].Human then
-      count := count + 1;
-
-  SetLength(ids, count);
-  SetLength(exps, count);
+  SetLength(ids, 32);
+  SetLength(exps, 32);
 
   count := 0;
   for i := 1 to 32 do
     if Players[i].Active and Players[i].Human then
      begin
        ids[count] := Players[i].ID;
-       exps[count] := PlayersData[Players[i].ID].exp + PlayersData[Players[i].ID].expBanked;
+       exps[count] := GetCurrentExp(Players[i]);
        count := count + 1;
      end;
+
+  SetLength(ids, count);
+  SetLength(exps, count);
 
   for i := 0 to Length(ids) - 1 do
     for j := i + 1 to Length(ids) - 1 do
@@ -226,7 +224,7 @@ end;
 function GetPlayerSummary(id: Integer): String;
 begin
   result := Players[id].name;
-  if PlayersData[id].manual then
+  if PlayersData[id].rebirth then
     result := result + '*';
   result := result + ' - Level ' + IntToStr(PlayersData[id].level);
 end;
