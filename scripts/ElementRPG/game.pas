@@ -63,7 +63,8 @@ begin
 
   dmgAdjusted := ApplyTimestopDamage(shooter, dmgAdjusted);
   dmgAdjusted := ApplyBarkskin(victim, dmgAdjusted);
-  if victim = shooter then
+  // 255 = environmental damage
+  if (victim = shooter) and (bulletId <> 255) then
     dmgAdjusted := ApplyEarthenEmbrace(victim, dmgAdjusted);
   dmgAdjusted := ApplyCrystallineShield(victim, shooter, dmgAdjusted);
   dmgAdjusted := ApplySmokeScreen(victim, shooter, dmgAdjusted);
