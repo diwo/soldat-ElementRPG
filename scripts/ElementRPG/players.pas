@@ -63,10 +63,14 @@ begin
 end;
 
 function GetUnassignedSkillPoints(var player: TActivePlayer): Integer;
+var
+  skillpoints: Integer;
 begin
-  result := LevelSkillPoints(PlayersData[player.ID].level) - PlayersData[player.ID].assignedSp;
-  if result < 0 then
-    result := 0;
+  if player.human
+    then skillpoints := LevelSkillPoints(PlayersData[player.ID].level)
+    else skillpoints := 0;
+
+  result := Trunc(Max(0, skillpoints - PlayersData[player.ID].assignedSp));
 end;
 
 procedure NotifyUnassignedSkillPoints(var player: TActivePlayer);
