@@ -8,7 +8,10 @@ uses
 procedure TCPCmdHelp();
 begin
   WriteLn('Available commands:');
-  WriteLn('/players');
+  WriteLn('/players [skills]');
+  WriteLn('/reroll [all | PLAYER_ID]');
+  WriteLn('/boost [all | PLAYER_ID] LEVEL');
+  WriteLn('/minsp COUNT');
 end;
 
 procedure TCPCmdPlayers(var args: Array of String);
@@ -34,6 +37,26 @@ begin
         if PlayersData[ids[i]].skillRanks[j] > 0 then
           WriteLn('  ' + GetPlayerSkill(Players[ids[i]], j));
   end;
+end;
+
+procedure TCPCmdReroll(var args: Array of String);
+var
+  targetNum, i: Integer;
+begin
+  try
+    targetNum := StrToInt(args[1]);
+  except
+    targetNum := 0;
+  end;
+
+  for i := 1 to 32 do
+    if (targetNum = 0) or (i = targetNum) then
+      PlayerReroll(Players[i]);
+
+  if targetNum = 0 then
+    WriteLn('You redistrubuted all players skill points')
+  else
+    WriteLn('You redistrubuted ' + Players[targetNum].Name + '''s skill points');
 end;
 
 procedure TCPCmdBoost(var args: Array of String);
@@ -68,6 +91,22 @@ begin
   WriteLn('  /boost all TARGET_LEVEL');
 end;
 
+procedure TCPCmdMinSp(var args: Array of String);
+var
+  targetSp, i: Integer;
+begin
+  try
+    targetSp := Trunc(Max(0, StrToInt(args[1])));
+  except
+    targetSp := 0;
+  end;
+
+  MinSp := targetSp;
+  WriteLn('You set minimum skill points to ' + IntToStr(MinSp));
+  for i := 1 to 32 do
+    PlayerFixSp(Players[i]);
+end;
+
 procedure HandleOnTCPMessage(ip: string; port: Word; text: string);
 var
   args: Array of String;
@@ -77,6 +116,8 @@ begin
   case LowerCase(args[0]) of
     '/help': TCPCmdHelp();
     '/players': TCPCmdPlayers(args);
+    '/reroll': TCPCmdReroll(args);
     '/boost': TCPCmdBoost(args);
+    '/minsp': TCPCmdMinSp(args);
   end;
 end;

@@ -85,8 +85,10 @@ var
   LastTargetIds: Array[1..32] of Integer;
 
 var
+  MinSp: Integer;
   LastTick: Integer;
 
 begin
+  MinSp := 0;
   LastTick := 0;
 end.

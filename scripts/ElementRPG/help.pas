@@ -9,6 +9,7 @@ begin
   player.WriteConsole('Available commands:', ORANGE);
   player.WriteConsole('/assign  - Manually assign skill points', WHITE);
   player.WriteConsole('/refund  - Refund skill points', WHITE);
+  player.WriteConsole('/reroll  - Randomly redistribute skill points', WHITE);
   player.WriteConsole('/auto    - Automatically distribute skill points', WHITE);
   player.WriteConsole('/players - Show player levels and skills', WHITE);
   player.WriteConsole('/rebirth - Temporarily set your level to 1', GREY);

@@ -66,6 +66,33 @@ begin
   RefreshPlayerUI(player);
 end;
 
+procedure CmdReroll(var player: TActivePlayer; var args: Array of String);
+var
+  targetNum, i: Integer;
+begin
+  targetNum := player.ID;
+  if player.IsAdmin then
+  begin
+    try
+      if LowerCase(args[1]) = 'all' then
+        targetNum := 0
+      else
+        targetNum := StrToInt(args[1]);
+    except end;
+  end;
+
+  for i := 1 to 32 do
+    if (player.IsAdmin and (targetNum = 0)) or (i = targetNum) then
+      PlayerReroll(Players[i]);
+
+  if player.IsAdmin then
+    if targetNum = 0 then
+      player.WriteConsole('You redistrubuted all players skill points', YELLOW)
+    else if targetNum <> player.ID then
+      player.WriteConsole(
+        'You redistrubuted ' + Players[targetNum].Name + '''s skill points', YELLOW);
+end;
+
 procedure CmdAuto(var player: TActivePlayer);
 begin
   PlayersData[player.ID].manual := false;
@@ -222,6 +249,25 @@ begin
   end;
 end;
 
+procedure CmdMinSp(var player: TActivePlayer; var args: Array of String);
+var
+  targetSp, i: Integer;
+begin
+  if player.IsAdmin then
+  begin
+    try
+      targetSp := Trunc(Max(0, StrToInt(args[1])));
+    except
+      targetSp := 0;
+    end;
+
+    MinSp := targetSp;
+    player.WriteConsole('You set minimum skill points to ' + IntToStr(MinSp), YELLOW);
+    for i := 1 to 32 do
+      PlayerFixSp(Players[i]);
+  end;
+end;
+
 function HandleOnCommand(var player: TActivePlayer; cmd: String): Boolean;
 var
   args: Array of String;
@@ -233,6 +279,7 @@ begin
   case LowerCase(args[0]) of
     '/assign': CmdAssign(player, args);
     '/refund': CmdRefund(player, args);
+    '/reroll': CmdReroll(player, args);
     '/auto': CmdAuto(player);
     '/players': CmdPlayers(player);
     '/rebirth': CmdRebirth(player, args);
@@ -245,6 +292,7 @@ begin
     '/resetcd': CmdResetCd(player);
     '/bot': CmdBot(player, args);
     '/boost': CmdBoost(player, args);
+    '/minsp': CmdMinSp(player, args);
   else
     result := false;
   end;

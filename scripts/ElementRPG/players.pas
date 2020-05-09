@@ -24,9 +24,6 @@ end;
 
 function ExpLevel(exp: Integer): Integer;
 begin
-  // Old quadratic formula
-  (* result := Trunc(Sqrt(exp / 10) * 3 / 10) + 1; *)
-
   result := Trunc(Ln(exp/1300.0 + 1) * 8 + 1);
 end;
 
@@ -40,7 +37,7 @@ end;
 
 function LevelSkillPoints(level: Integer): Integer;
 begin
-  result := 20 + (level - 1);
+  result := Trunc(Max(MinSp, 20 + (level - 1)));
 end;
 
 function GetCurrentExp(player: TActivePlayer): Integer;
@@ -138,6 +135,7 @@ begin
   begin
     if activePlayerIds[i] <> excludePlayerId then
     begin
+      playersInfo[infoIdx].id := activePlayerIds[i];
       playersInfo[infoIdx].name := Players[activePlayerIds[i]].name;
       playersInfo[infoIdx].level := PlayersData[activePlayerIds[i]].level;
       playersInfo[infoIdx].manual := PlayersData[activePlayerIds[i]].manual;
@@ -192,7 +190,7 @@ begin
   RefreshPlayerCooldowns(player);
 end;
 
-procedure RefreshPlayerUI(var player: TActivePlayer);
+procedure RefreshPlayerUI(player: TActivePlayer);
 begin
   HudUpdateLevel(
     player,
@@ -359,7 +357,7 @@ begin
   end;
 end;
 
-procedure AutoDistributeSkillPoints(var player: TActivePlayer);
+procedure AutoDistributeSkillPoints(player: TActivePlayer);
 var
   choices: Array[0..SKILLS_LENGTH-1] of Integer;
   choicesCount: Integer;
@@ -449,6 +447,34 @@ begin
     PlayersData[player.ID].spawnAmmoGiven := true;
     if player.primary.WType = WTYPE_M79 then
       player.primary.ammo := GetWeaponMaxAmmo(WTYPE_M79);
+  end;
+end;
+
+procedure PlayerReroll(player: TActivePlayer);
+var
+  i: Integer;
+begin
+  PlayersData[player.ID].manual := false;
+  for i := 1 to SKILLS_LENGTH do
+    PlayersData[player.ID].skillRanks[i] := 0;
+  PlayersData[player.ID].assignedSp := 0;
+
+  AutoDistributeSkillPoints(player);
+  RefreshPlayerUI(player);
+  player.WriteConsole('Your skill points have been redistributed', YELLOW);
+end;
+
+procedure PlayerFixSp(player: TActivePlayer);
+begin
+  if player.Active and player.Human then
+  begin
+    if PlayersData[player.ID].assignedSp > LevelSkillPoints(PlayersData[player.ID].level) then
+      PlayerReroll(player)
+    else
+    begin
+      AutoDistributeSkillPoints(player);
+      RefreshPlayerUI(player);
+    end;
   end;
 end;
 

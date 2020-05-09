@@ -22,6 +22,7 @@ type
   end;
 
   THudPlayerInfo = record
+    id: Integer;
     name: String;
     level: Integer;
     manual: Boolean;
@@ -258,7 +259,11 @@ begin
   begin
     layer := layer + 1;
 
-    text := Copy(playersInfo[i].name, 1, 15);
+    text := '';
+    if player.IsAdmin then
+      text := text + IntToStr(playersInfo[i].id) + ': ';
+
+    text := text + Copy(playersInfo[i].name, 1, 15);
     if playersInfo[i].rebirth then
       text := text + '*';
     text := text + ' (Lv ' + IntToStr(playersInfo[i].level) + ')';
