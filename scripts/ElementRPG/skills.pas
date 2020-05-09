@@ -375,30 +375,30 @@ begin
   end;
 end;
 
-procedure UseBloodRitual(player: TActivePlayer);
+procedure UseSoulReap(player: TActivePlayer);
 var
   rank, cd, cdRemain: Integer;
   hpPercent, hpAmount: Single;
 begin
-  rank := PlayersData[player.ID].skillRanks[SKILL_BLOOD_RITUAL];
+  rank := PlayersData[player.ID].skillRanks[SKILL_SOUL_REAP];
 
   if (rank > 0) and (player.Primary.WType <> WTYPE_NOWEAPON) then
   begin
-    cd := CooldownTicks(player, SKILL_BLOOD_RITUAL);
-    cdRemain := CooldownTicksRemaining(player, SKILL_BLOOD_RITUAL);
+    cd := CooldownTicks(player, SKILL_SOUL_REAP);
+    cdRemain := CooldownTicksRemaining(player, SKILL_SOUL_REAP);
 
     if cdRemain <= 0 then
     begin
-      SetSkillLastUsedTick(player, SKILL_BLOOD_RITUAL);
-      hpPercent := RankInterpolate(5, 20, SKILL_BLOOD_RITUAL, rank);
+      SetSkillLastUsedTick(player, SKILL_SOUL_REAP);
+      hpPercent := RankInterpolate(5, 20, SKILL_SOUL_REAP, rank);
 
-      player.Primary.Ammo := GetWeaponMaxAmmo(player.Primary.WType);
       if player.Secondary.WType <> WTYPE_NOWEAPON then
       begin
         player.ForceWeapon(player.Secondary, player.Primary);
         player.Primary.Ammo := GetWeaponMaxAmmo(player.Primary.WType);
         player.ForceWeapon(player.Secondary, player.Primary);
       end;
+      player.Primary.Ammo := GetWeaponMaxAmmo(player.Primary.WType);
 
       hpAmount := GetMaxHP(player) * hpPercent / 100.0;
       if PlayersData[player.ID].hp + hpAmount < GetMaxHP(player) then
@@ -414,30 +414,30 @@ begin
       FillScreen(player, LAYER_SOUL_REAP, 60/2, $2214C948);
 
       player.WriteConsole(
-        'You activated Blood Ritual to replenish ammo and some health' +
+        'You activated Soul Reap to replenish ammo and some health' +
         ' (cooldown ' + IntToStr(cd/60) + 's)', WHITE);
     end;
   end;
 end;
 
-procedure UseSoulReap(player: TActivePlayer);
+procedure UseChronoTap(player: TActivePlayer);
 var
   rank, cd, cdRemain: Integer;
   ticksSinceLast, reduction, i: Integer;
 begin
-  rank := PlayersData[player.ID].skillRanks[SKILL_SOUL_REAP];
+  rank := PlayersData[player.ID].skillRanks[SKILL_CHRONO_TAP];
 
   if rank > 0 then
   begin
-    cd := CooldownTicks(player, SKILL_SOUL_REAP);
-    cdRemain := CooldownTicksRemaining(player, SKILL_SOUL_REAP);
+    cd := CooldownTicks(player, SKILL_CHRONO_TAP);
+    cdRemain := CooldownTicksRemaining(player, SKILL_CHRONO_TAP);
 
     if cdRemain <= 0 then
     begin
-      ticksSinceLast := TicksSinceSkillUsed(player, SKILL_SOUL_REAP);
-      SetSkillLastUsedTick(player, SKILL_SOUL_REAP);
+      ticksSinceLast := TicksSinceSkillUsed(player, SKILL_CHRONO_TAP);
+      SetSkillLastUsedTick(player, SKILL_CHRONO_TAP);
 
-      reduction := Trunc(RankInterpolate(5*60, 15*60, SKILL_SOUL_REAP, rank));
+      reduction := Trunc(RankInterpolate(5*60, 15*60, SKILL_CHRONO_TAP, rank));
       if ticksSinceLast >= 0 then
         reduction := Trunc(InterpolateLinear(0, reduction, 0, 60*60, ticksSinceLast));
 
@@ -445,7 +445,7 @@ begin
         ReduceSkillCooldown(player, i, reduction);
 
       player.WriteConsole(
-        'You activated Soul Reap to reduce skill cooldowns by ' +
+        'You activated Chrono Tap to reduce skill cooldowns by ' +
         FloatToStrTrunc(reduction/60.0, 1) + 's', WHITE);
     end;
   end;

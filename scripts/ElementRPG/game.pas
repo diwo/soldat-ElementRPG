@@ -118,8 +118,8 @@ begin
 
   if killer.ID <> victim.ID then
   begin
-    UseBloodRitual(killer);
     UseSoulReap(killer);
+    UseChronoTap(killer);
 
     exp := KillExp(killer, victim);
 
