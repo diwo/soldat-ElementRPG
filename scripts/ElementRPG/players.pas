@@ -40,7 +40,7 @@ end;
 
 function LevelSkillPoints(level: Integer): Integer;
 begin
-  result := level - 1;
+  result := 20 + (level - 1);
 end;
 
 function GetCurrentExp(player: TActivePlayer): Integer;
