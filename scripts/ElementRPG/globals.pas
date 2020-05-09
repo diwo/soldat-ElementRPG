@@ -51,6 +51,7 @@ const
   // skills points
   LAYER_SP_INFO_1 = 30;
   LAYER_SP_INFO_2 = 31;
+  LAYER_SP_INFO_3 = 32;
 
   // damage indicator
   LAYER_DAMAGE_INDICATOR = 50;
@@ -73,7 +74,7 @@ type
     player: TActivePlayer;
     level, exp, expBanked, expBoost, assignedSp: Integer;
     hp: Single;
-    manual, rebirth: Boolean;
+    manual, rebirth, showSkillInfo: Boolean;
     skillRanks: Array[1..SKILLS_LENGTH] of Integer;
     spawnAmmoGiven: Boolean;
     spawnTick: Integer;

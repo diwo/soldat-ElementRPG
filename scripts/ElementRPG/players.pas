@@ -188,7 +188,11 @@ var
   skill: Integer;
 begin
   for skill := 1 to SKILLS_LENGTH do
-    HudUpdateSkill(player, skill, PlayersData[player.ID].skillRanks[skill], SkillMaxRanks[skill]);
+    HudUpdateSkill(
+      player, skill,
+      PlayersData[player.ID].skillRanks[skill],
+      SkillMaxRanks[skill],
+      PlayersData[player.ID].showSkillInfo);
 
   HudUpdateSkillPoints(player, GetUnassignedSkillPoints(player), PlayersData[player.ID].manual);
   RefreshPlayerCooldowns(player);
@@ -552,6 +556,7 @@ begin
   PlayersData[player.ID].expBoost := 0;
   PlayersData[player.ID].manual := saveData.manual;
   PlayersData[player.ID].rebirth := false;
+  PlayersData[player.ID].showSkillInfo := false;
 
   skillRanksTotal := 0;
   for i := 1 to SKILLS_LENGTH do

@@ -148,8 +148,9 @@ end;
 
 procedure CmdSkills(var player: TActivePlayer);
 begin
+  PlayersData[player.ID].showSkillInfo := not PlayersData[player.ID].showSkillInfo;
+  RefreshPlayerSkills(player);
   ShowPlayerSkills(player);
-  HelpAssign(player);
 end;
 
 procedure CmdGust(var player: TActivePlayer; var args: Array of String);

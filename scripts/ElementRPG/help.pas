@@ -7,6 +7,7 @@ uses
 procedure HelpGeneral(var player: TActivePlayer);
 begin
   player.WriteConsole('Available commands:', ORANGE);
+  player.WriteConsole('/skills  - Show skill descriptions', WHITE);
   player.WriteConsole('/assign  - Manually assign skill points', WHITE);
   player.WriteConsole('/refund  - Refund skill points', WHITE);
   player.WriteConsole('/reroll  - Randomly redistribute skill points', WHITE);

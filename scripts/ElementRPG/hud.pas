@@ -142,7 +142,7 @@ begin
     ORANGE, 0.04, HUD_SKILLS_X_OFFSET, HUD_SKILLS_Y_OFFSET);
 end;
 
-procedure HudUpdateSkill(player: TActivePlayer; skill, rank, max: Integer);
+procedure HudUpdateSkill(player: TActivePlayer; skill, rank, max: Integer; showSkillInfo: Boolean);
 var
   text: String;
   color: Longint;
@@ -151,12 +151,15 @@ begin
   text := IntToStr(skill) + ': ' + SkillNames[skill] +
           ' [' + IntToStr(rank) + '/' + IntToStr(max) + ']';
 
+  if showSkillInfo then
+    text := text + ' - ' + SkillInfo[skill];
+
   if rank >= SkillMaxRanks[skill] then
-    color := WHITE
+    color := LIGHTYELLOW
   else if rank > 0 then
-    color := LIGHTGREY
+    color := WHITE
   else
-    color := GREY;
+    color := LIGHTGREY;
 
   layer := LAYER_SKILLS + skill;
 
@@ -176,10 +179,13 @@ begin
       LAYER_SP_INFO_1, text, HUD_TEXT_DURATION_PERM,
       YELLOW, 0.03, HUD_SKILLS_X_OFFSET, HUD_SKILLS_Y_OFFSET + SKILLS_LENGTH * 10 + 20);
 
-    text := 'Type /assign to allocate points';
     player.BigText(
-      LAYER_SP_INFO_2, text, HUD_TEXT_DURATION_PERM,
+      LAYER_SP_INFO_2, 'Type /assign to allocate points', HUD_TEXT_DURATION_PERM,
       YELLOW, 0.03, HUD_SKILLS_X_OFFSET, HUD_SKILLS_Y_OFFSET + SKILLS_LENGTH * 10 + 28);
+
+    player.BigText(
+      LAYER_SP_INFO_3, 'Type /skills to toggle skill info', HUD_TEXT_DURATION_PERM,
+      YELLOW, 0.03, HUD_SKILLS_X_OFFSET, HUD_SKILLS_Y_OFFSET + SKILLS_LENGTH * 10 + 36);
   end
   else if not manual then
   begin
@@ -188,13 +194,24 @@ begin
       YELLOW, 0.03, HUD_SKILLS_X_OFFSET, HUD_SKILLS_Y_OFFSET + SKILLS_LENGTH * 10 + 20);
 
     player.BigText(
-      LAYER_SP_INFO_2, 'Type /help to assign manually', HUD_TEXT_DURATION_PERM,
+      LAYER_SP_INFO_2, 'Type /skills to toggle skill info', HUD_TEXT_DURATION_PERM,
       YELLOW, 0.03, HUD_SKILLS_X_OFFSET, HUD_SKILLS_Y_OFFSET + SKILLS_LENGTH * 10 + 28);
+
+    player.BigText(
+      LAYER_SP_INFO_3, 'Type /help for usage', HUD_TEXT_DURATION_PERM,
+      YELLOW, 0.03, HUD_SKILLS_X_OFFSET, HUD_SKILLS_Y_OFFSET + SKILLS_LENGTH * 10 + 36);
   end
   else
   begin
-    player.BigText(LAYER_SP_INFO_1, '', 0, 0, 0, 0, 0);
-    player.BigText(LAYER_SP_INFO_2, '', 0, 0, 0, 0, 0);
+    player.BigText(
+      LAYER_SP_INFO_1, 'Type /skills to toggle skill info', HUD_TEXT_DURATION_PERM,
+      YELLOW, 0.03, HUD_SKILLS_X_OFFSET, HUD_SKILLS_Y_OFFSET + SKILLS_LENGTH * 10 + 20);
+
+    player.BigText(
+      LAYER_SP_INFO_2, 'Type /help for usage', HUD_TEXT_DURATION_PERM,
+      YELLOW, 0.03, HUD_SKILLS_X_OFFSET, HUD_SKILLS_Y_OFFSET + SKILLS_LENGTH * 10 + 28);
+
+    player.BigText(LAYER_SP_INFO_3, '', 0, 0, 0, 0, 0);
   end;
 end;
 
