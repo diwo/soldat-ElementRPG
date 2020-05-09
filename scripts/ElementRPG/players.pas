@@ -496,6 +496,8 @@ begin
     PlayersData[player.ID].skillRanks[i] := 0;
   PlayersData[player.ID].assignedSp := 0;
 
+  AutoDistributeSkillPoints(player);
+
   player.WriteConsole('You are reborn!', YELLOW);
   player.WriteConsole('Welcome to Level 1, Noob!', YELLOW);
 
@@ -606,18 +608,14 @@ end;
 procedure InitPlayer(var player: TActivePlayer);
 begin
   LoadPlayer(player);
+  AutoDistributeSkillPoints(player);
 
   player.WriteConsole('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', ORANGE);
   player.WriteConsole('Welcome, this server is running ElementRPG mod!', ORANGE);
   player.WriteConsole('Type /help to get started', ORANGE);
   player.WriteConsole('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', ORANGE);
 
-  if PlayersData[player.ID].level > 1 then
-  begin
-    player.WriteConsole(GetPlayerStats(player), CYAN);
-    AutoDistributeSkillPoints(player);
-    NotifyUnassignedSkillPoints(player);
-  end;
+  NotifyUnassignedSkillPoints(player);
 
   InitPlayerSpawn(player);
 end;
