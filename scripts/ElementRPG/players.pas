@@ -455,7 +455,9 @@ var
 begin
   weapon := TNewWeapon.Create();
   try
-    weapon.WType := RandomWeaponPrimary();
+    if player.human
+      then weapon.WType := RandomWeaponPrimary()
+      else weapon.WType := RandomWeaponForBot();
     weapon.Ammo := GetWeaponMaxAmmo(weapon.WType);
     player.ForceWeapon(TWeapon(weapon), player.secondary);
   finally

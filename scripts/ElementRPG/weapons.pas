@@ -86,6 +86,23 @@ begin
   end;
 end;
 
+function RandomWeaponForBot(): Integer;
+var
+  weapons: Array[1..9] of Integer;
+begin
+  // WTYPE_STEYRAUG excluded due to infinite ammo glitch
+  weapons[1] := WTYPE_EAGLE;
+  weapons[2] := WTYPE_MP5;
+  weapons[3] := WTYPE_AK74;
+  weapons[4] := WTYPE_SPAS12;
+  weapons[5] := WTYPE_RUGER77;
+  weapons[6] := WTYPE_M79;
+  weapons[7] := WTYPE_BARRETT;
+  weapons[8] := WTYPE_M249;
+  weapons[9] := WTYPE_MINIGUN;
+  result := weapons[RandomFixed(1, Length(weapons))];
+end;
+
 function RandomWeaponPrimary(): Integer;
 begin
   result := RandomFixed(1, 10);
