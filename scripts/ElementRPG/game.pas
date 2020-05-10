@@ -61,6 +61,9 @@ begin
   UseBlindingFlash(shooter, victim);
   UseShock(shooter, victim);
 
+  if not shooter.human then
+    dmgAdjusted := dmgAdjusted * 0.5;
+
   dmgAdjusted := ApplyTimestopDamage(shooter, dmgAdjusted);
   dmgAdjusted := ApplyBarkskin(victim, dmgAdjusted);
   // 255 = environmental damage
