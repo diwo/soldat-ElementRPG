@@ -3,26 +3,27 @@ unit SkillsInfo;
 const
   // Offensive
   SKILL_MAGIC_MISSILE = 1;
-  SKILL_MAGNETIC_GRASP = 2;
-  SKILL_BLINDING_FLASH = 3;
-  SKILL_SHOCK = 4;
-  SKILL_STORM_CHARGE = 5;
-  SKILL_NOVA = 6;
+  SKILL_FIRE_BLAST = 2;
+  SKILL_MAGNETIC_GRASP = 3;
+  SKILL_BLINDING_FLASH = 4;
+  SKILL_SHOCK = 5;
+  SKILL_STORM_CHARGE = 6;
+  SKILL_NOVA = 7;
   // Defensive
-  SKILL_BARKSKIN = 7;
-  SKILL_EARTHEN_EMBRACE = 8;
-  SKILL_CRYSTALLINE_SHIELD = 9;
-  SKILL_SMOKESCREEN = 10;
-  SKILL_FLAME_BARRIER = 11;
-  SKILL_HEALING_BREEZE = 12;
+  SKILL_BARKSKIN = 8;
+  SKILL_EARTHEN_EMBRACE = 9;
+  SKILL_CRYSTALLINE_SHIELD = 10;
+  SKILL_SMOKESCREEN = 11;
+  SKILL_FLAME_BARRIER = 12;
+  SKILL_HEALING_BREEZE = 13;
   // Utility
-  SKILL_SOUL_REAP = 13;
-  SKILL_CHRONO_TAP = 14;
-  SKILL_TIMESTOP = 15;
-  SKILL_GUST = 16;
+  SKILL_SOUL_REAP = 14;
+  SKILL_CHRONO_TAP = 15;
+  SKILL_TIMESTOP = 16;
+  SKILL_GUST = 17;
 
 const
-  SKILLS_LENGTH = 16;
+  SKILLS_LENGTH = 17;
 
 var
   SkillNames: Array[1..SKILLS_LENGTH] of String;
@@ -53,6 +54,7 @@ procedure InitSkillsInfo();
 begin
   // Offsensive
   InitSkill(SKILL_MAGIC_MISSILE,      'MagicMissile',      10, 20,  5,  true,  true,  'Shoot missiles on damage');
+  InitSkill(SKILL_FIRE_BLAST,         'FireBlast',         10, 30,  10, true,  true,  'Create a fiery explosion at your target on damage');
   InitSkill(SKILL_MAGNETIC_GRASP,     'MagneticGrasp',     10, 30,  10, true,  true,  'Pull enemies towards you on damage');
   InitSkill(SKILL_BLINDING_FLASH,     'BlindingFlash',     10, 90,  45, true,  true,  'Blind enemies on damage');
   InitSkill(SKILL_SHOCK,              'Shock',             10, 90,  45, true,  true,  'Disarm nearby enemies on damage');

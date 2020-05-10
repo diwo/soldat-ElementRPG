@@ -39,6 +39,42 @@ begin
   end;
 end;
 
+procedure UseFireBlast(var player, victim: TActivePlayer);
+var
+  rank, cd, cdRemain: Integer;
+  flameDamage, flameDamageAoe: Single;
+  i: Integer;
+begin
+  rank := PlayersData[player.ID].skillRanks[SKILL_FIRE_BLAST];
+
+  if (rank > 0) and (player <> victim) then
+  begin
+    cd := CooldownTicks(player, SKILL_FIRE_BLAST);
+    cdRemain := CooldownTicksRemaining(player, SKILL_FIRE_BLAST);
+
+    if cdRemain <= 0 then
+    begin
+      SetSkillLastUsedTick(player, SKILL_FIRE_BLAST);
+
+      flameDamage := RankInterpolate(5, 8, SKILL_FIRE_BLAST, rank);
+      flameDamageAoe := RankInterpolate(8, 12, SKILL_FIRE_BLAST, rank);
+
+      for i := 0 to 4 do
+      begin
+        // Inwards
+        CreateBulletAngled(player, victim, BULLET_FLAME, PI*2*i/5, -10, 20, flameDamage);
+        // Outwards
+        CreateBulletAngled(player, victim, BULLET_FLAME, PI*2*i/5-PI*2/4, 10, 20, flameDamageAoe);
+        CreateBulletAngled(player, victim, BULLET_FLAME, PI*2*(i+0.5)/5-PI*2/4, 5, 20, flameDamageAoe);
+      end;
+
+      player.WriteConsole(
+        'You activated Fire Blast against ' + victim.name +
+        ' (cooldown ' + IntToStr(cd/60) + 's)', WHITE);
+    end;
+  end;
+end;
+
 procedure UseMagneticGrasp(var player, victim: TActivePlayer);
 var
   rank, cd, cdRemain: Integer;
@@ -199,7 +235,7 @@ begin
       damage := RankInterpolate(10, 30, SKILL_NOVA, rank);
 
       for i := 0 to numProj - 1 do
-        CreateBulletAngled(player, BULLET_M2, PI*2*i/numProj, speed, 20, damage);
+        CreateBulletAngled(player, player, BULLET_M2, PI*2*i/numProj, speed, 20, damage);
 
       player.WriteConsole('You activated Nova! (cooldown ' + IntToStr(cd/60) + 's)', WHITE);
     end;

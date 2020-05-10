@@ -57,6 +57,7 @@ begin
 
   UseStormCharge(shooter, victim);
   UseMagicMissile(shooter, victim);
+  UseFireBlast(shooter, victim);
   UseMagneticGrasp(shooter, victim);
   UseBlindingFlash(shooter, victim);
   UseShock(shooter, victim);

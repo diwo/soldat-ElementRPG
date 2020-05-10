@@ -114,18 +114,18 @@ begin
 end;
 
 procedure CreateBulletAngled(
-  player: TActivePlayer; style: Byte;
+  owner, target: TActivePlayer; style: Byte;
   angle, speed, spawnDist, dmgMult: Single);
 var
   x, y, vx, vy: Single;
 begin
-  x := player.x;
-  y := player.y - 10;
+  x := target.x;
+  y := target.y - 10;
   vx := cos(angle) * speed;
   vy := sin(angle) * speed;
   x := x + vx / speed * spawnDist;
   y := y + vy / speed * spawnDist;
-  Map.CreateBullet(x, y, vx, vy, dmgMult, style, player);
+  Map.CreateBullet(x, y, vx, vy, dmgMult, style, owner);
 end;
 
 procedure CreateBulletTargeted(
