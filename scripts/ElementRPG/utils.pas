@@ -152,7 +152,7 @@ begin
     WTYPE_USSOCOM: result := 1;
     WTYPE_KNIFE: result := 0;
     WTYPE_CHAINSAW: result := 200;
-    WTYPE_LAW: result := 10;
+    WTYPE_LAW: result := 6;
     WTYPE_FLAMER: result := 0;
     WTYPE_BOW: result := 0;
     WTYPE_BOW2: result := 0;
