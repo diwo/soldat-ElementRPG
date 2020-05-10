@@ -4,6 +4,7 @@ uses
   SaveFiles,
   SkillsInfo,
   Cooldowns,
+  Weapons,
   HUD,
   Math,
   Utils,
@@ -400,7 +401,7 @@ begin
       end;
 
       if skill = 0 then
-        skill := choices[Random(0, choicesCount)];
+        skill := choices[RandomFixed(0, choicesCount - 1)];
 
       AssignSkillPoints(player, skill, 9999);
     end;
@@ -448,11 +449,29 @@ begin
   end;
 end;
 
-procedure GivePlayerSpawnAmmo(player: TActivePlayer);
+procedure PlayerForceRandomWeapon(player: TActivePlayer);
+var
+  weapon: TNewWeapon;
 begin
-  if not PlayersData[player.ID].spawnAmmoGiven then
+  weapon := TNewWeapon.Create();
+  try
+    weapon.WType := RandomWeaponPrimary();
+    weapon.Ammo := GetWeaponMaxAmmo(weapon.WType);
+    player.ForceWeapon(TWeapon(weapon), player.secondary);
+  finally
+    weapon.Free();
+  end;
+end;
+
+procedure PlayerSpawnFix(player: TActivePlayer);
+begin
+  if not PlayersData[player.ID].spawnFixed then
   begin
-    PlayersData[player.ID].spawnAmmoGiven := true;
+    PlayersData[player.ID].spawnFixed := true;
+
+    if not player.human then
+      PlayerForceRandomWeapon(player);
+
     if player.primary.WType = WTYPE_M79 then
       player.primary.ammo := GetWeaponMaxAmmo(WTYPE_M79);
   end;
@@ -605,7 +624,7 @@ begin
   ClearPlayerFromAttackerTarget(player);
 
   SetPlayerHP(player, GetMaxHP(player));
-  PlayersData[player.ID].spawnAmmoGiven := false;
+  PlayersData[player.ID].spawnFixed := false;
   PlayersData[player.ID].spawnTick := LastTick;
 
   player.WeaponActive[Weap2Menu(WTYPE_KNIFE)] := false;

@@ -189,7 +189,7 @@ begin
 
   for i := 1 to 32 do
     if Players[i].active then
-      GivePlayerSpawnAmmo(Players[i]);
+      PlayerSpawnFix(Players[i]);
 
   // Scheduled
 

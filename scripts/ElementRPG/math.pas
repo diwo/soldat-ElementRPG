@@ -112,3 +112,8 @@ begin
   ratio := (a * a) / (b * b);
   result := Interpolate(fromVal, toVal, ratio);
 end;
+
+function RandomFixed(x, y: Integer): Integer;
+begin
+  result := Random(Trunc(Min(x, y)), Trunc(Max(x, y)) + 1);
+end;

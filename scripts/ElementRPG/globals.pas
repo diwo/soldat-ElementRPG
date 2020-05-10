@@ -76,7 +76,7 @@ type
     hp: Single;
     manual, rebirth, showSkillInfo: Boolean;
     skillRanks: Array[1..SKILLS_LENGTH] of Integer;
-    spawnAmmoGiven: Boolean;
+    spawnFixed: Boolean;
     spawnTick: Integer;
   end;
 

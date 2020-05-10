@@ -51,8 +51,8 @@ begin
   DamageDealtLayerOffset[player.ID] :=
     (DamageDealtLayerOffset[player.ID] + 1) mod DAMAGE_INDICATOR_LAYERS_MAX;
 
-  xoffset := Random(-100, 100) / 100.0 * 10.0;
-  yoffset := Random(-100, 100) / 100.0 * 5.0;
+  xoffset := RandomFixed(-100, 100) / 100.0 * 10.0;
+  yoffset := RandomFixed(-100, 100) / 100.0 * 5.0;
 
   xoffset := xoffset * (1 - Min(damage, 500)/800);
   yoffset := yoffset * (1 - Min(damage, 500)/800);
@@ -74,8 +74,8 @@ begin
   DamageTakenLayerOffset[player.ID] :=
     (DamageTakenLayerOffset[player.ID] + 1) mod DAMAGE_INDICATOR_LAYERS_MAX;
 
-  xoffset := Random(-100, 100) * 10.0 / 100.0;
-  yoffset := Random(-100, 100) * 5.0 / 100.0;
+  xoffset := RandomFixed(-100, 100) * 10.0 / 100.0;
+  yoffset := RandomFixed(-100, 100) * 5.0 / 100.0;
 
   xoffset := xoffset * (1 - Min(damage, 500)/800);
   yoffset := yoffset * (1 - Min(damage, 500)/800);
