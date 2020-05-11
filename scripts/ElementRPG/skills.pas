@@ -7,211 +7,208 @@ uses
   DamageIndicator,
   Help,
   Utils,
+  Math,
   Globals;
 
-procedure UseMagicMissile(var player, victim: TActivePlayer);
+function SkillProc(chanceLow, chanceHigh: Integer; damageLow, damageHigh, damage: Single): Boolean;
 var
-  rank, cd, cdRemain: Integer;
-  speed, spread, damage: Single;
-  collision: Boolean;
+  chance: Integer;
+begin
+  chance := Trunc(InterpolateLinear(chanceLow, chanceHigh, damageLow, damageHigh, damage));
+  result := RandomFixed(1, 100) <= chance;
+end;
+
+procedure UseMagicMissile(var player, victim: TActivePlayer; damage: Single);
+var
+  rank, cd: Integer;
+  speed, spread, missileDamage: Single;
 begin
   rank := PlayersData[player.ID].skillRanks[SKILL_MAGIC_MISSILE];
 
-  if (rank > 0) and (player <> victim) then
-  begin
-    cd := CooldownTicks(player, SKILL_MAGIC_MISSILE);
-    cdRemain := CooldownTicksRemaining(player, SKILL_MAGIC_MISSILE);
-    collision := RayCastPlayers(player, victim);
+  if rank <= 0 then exit;
+  if player = victim then exit;
+  if CooldownTicksRemaining(player, SKILL_MAGIC_MISSILE) > 0 then exit;
+  if DistancePlayers(player, victim) < 200 then exit;
+  if RayCastPlayers(player, victim) then exit;
+  if not SkillProc(10, 100, 20, 80, damage) then exit;
 
-    if (cdRemain <= 0) and (not collision) and (DistancePlayers(player, victim) > 200) then
-    begin
-      SetSkillLastUsedTick(player, SKILL_MAGIC_MISSILE);
-      speed := RankInterpolate(20, 30, SKILL_MAGIC_MISSILE, rank);
-      spread := RankInterpolate(30, 20, SKILL_MAGIC_MISSILE, rank);
-      damage := RankInterpolate(5, 8, SKILL_MAGIC_MISSILE, rank);
+  SetSkillLastUsedTick(player, SKILL_MAGIC_MISSILE);
 
-      CreateBulletTargeted(player, victim, player, BULLET_LAW, speed, 100, damage, spread);
+  cd := CooldownTicks(player, SKILL_MAGIC_MISSILE);
+  speed := RankInterpolate(20, 30, SKILL_MAGIC_MISSILE, rank);
+  spread := RankInterpolate(30, 20, SKILL_MAGIC_MISSILE, rank);
+  missileDamage := RankInterpolate(5, 8, SKILL_MAGIC_MISSILE, rank);
 
-      player.WriteConsole(
-        'You activated Magic Missile against ' + victim.name +
-        ' (cooldown ' + IntToStr(cd/60) + 's)', WHITE);
-    end;
-  end;
+  CreateBulletTargeted(player, victim, player, BULLET_LAW, speed, 100, missileDamage, spread);
+
+  player.WriteConsole(
+    'You activated Magic Missile against ' + victim.name +
+    ' (cooldown ' + IntToStr(cd/60) + 's)', WHITE);
 end;
 
-procedure UseFireBlast(var player, victim: TActivePlayer);
+procedure UseFireBlast(var player, victim: TActivePlayer; damage: Single);
 var
-  rank, cd, cdRemain: Integer;
+  rank, cd, i: Integer;
   flameDamage, flameDamageAoe: Single;
-  i: Integer;
 begin
   rank := PlayersData[player.ID].skillRanks[SKILL_FIRE_BLAST];
 
-  if (rank > 0) and (player <> victim) then
+  if rank <= 0 then exit;
+  if player = victim then exit;
+  if CooldownTicksRemaining(player, SKILL_FIRE_BLAST) > 0 then exit;
+  if not SkillProc(10, 100, 20, 120, damage) then exit;
+
+  SetSkillLastUsedTick(player, SKILL_FIRE_BLAST);
+
+  cd := CooldownTicks(player, SKILL_FIRE_BLAST);
+  flameDamage := RankInterpolate(5, 8, SKILL_FIRE_BLAST, rank);
+  flameDamageAoe := RankInterpolate(8, 12, SKILL_FIRE_BLAST, rank);
+
+  for i := 0 to 4 do
   begin
-    cd := CooldownTicks(player, SKILL_FIRE_BLAST);
-    cdRemain := CooldownTicksRemaining(player, SKILL_FIRE_BLAST);
-
-    if cdRemain <= 0 then
-    begin
-      SetSkillLastUsedTick(player, SKILL_FIRE_BLAST);
-
-      flameDamage := RankInterpolate(5, 8, SKILL_FIRE_BLAST, rank);
-      flameDamageAoe := RankInterpolate(8, 12, SKILL_FIRE_BLAST, rank);
-
-      for i := 0 to 4 do
-      begin
-        // Inwards
-        CreateBulletAngled(player, victim, BULLET_FLAME, PI*2*i/5, -10, 20, flameDamage);
-        // Outwards
-        CreateBulletAngled(player, victim, BULLET_FLAME, PI*2*i/5-PI*2/4, 10, 20, flameDamageAoe);
-        CreateBulletAngled(player, victim, BULLET_FLAME, PI*2*(i+0.5)/5-PI*2/4, 5, 20, flameDamageAoe);
-      end;
-
-      player.WriteConsole(
-        'You activated Fire Blast against ' + victim.name +
-        ' (cooldown ' + IntToStr(cd/60) + 's)', WHITE);
-    end;
+    // Inwards
+    CreateBulletAngled(player, victim, BULLET_FLAME, PI*2*i/5, -10, 20, flameDamage);
+    // Outwards
+    CreateBulletAngled(player, victim, BULLET_FLAME, PI*2*i/5-PI*2/4, 10, 20, flameDamageAoe);
+    CreateBulletAngled(player, victim, BULLET_FLAME, PI*2*(i+0.5)/5-PI*2/4, 5, 20, flameDamageAoe);
   end;
+
+  player.WriteConsole(
+    'You activated Fire Blast against ' + victim.name +
+    ' (cooldown ' + IntToStr(cd/60) + 's)', WHITE);
 end;
 
-procedure UseMagneticGrasp(var player, victim: TActivePlayer);
+procedure UseMagneticGrasp(var player, victim: TActivePlayer; damage: Single);
 var
-  rank, cd, cdRemain: Integer;
+  rank, cd: Integer;
   maxStrength, strength, dist: Single;
-  collision: Boolean;
 begin
   rank := PlayersData[player.ID].skillRanks[SKILL_MAGNETIC_GRASP];
 
-  if (rank > 0) and (player <> victim) and (victim.Primary.WType <> WTYPE_CHAINSAW) then
-  begin
-    cd := CooldownTicks(player, SKILL_MAGNETIC_GRASP);
-    cdRemain := CooldownTicksRemaining(player, SKILL_MAGNETIC_GRASP);
-    collision := RayCastPlayers(player, victim);
-    dist := Distance(player.x, player.y, victim.x, victim.y);
+  if rank <= 0 then exit;
+  if player = victim then exit;
+  if (victim.Primary.WType = WTYPE_CHAINSAW) or
+     (victim.Primary.WType = WTYPE_M249) then exit;
+  if CooldownTicksRemaining(player, SKILL_MAGNETIC_GRASP) > 0 then exit;
+  if RayCastPlayers(player, victim) then exit;
+  dist := Distance(player.x, player.y, victim.x, victim.y);
+  if dist < 120 then exit;
+  if not SkillProc(20, 100, 20, 80, damage) then exit;
 
-    if (cdRemain <= 0) and (not collision) and (dist > 120) then
-    begin
-      SetSkillLastUsedTick(player, SKILL_MAGNETIC_GRASP);
+  SetSkillLastUsedTick(player, SKILL_MAGNETIC_GRASP);
 
-      maxStrength := RankInterpolate(4, 8, SKILL_MAGNETIC_GRASP, rank);
-      strength := dist / 50.0;
-      if strength > maxStrength then
-        strength := maxStrength;
+  cd := CooldownTicks(player, SKILL_MAGNETIC_GRASP);
+  maxStrength := RankInterpolate(4, 8, SKILL_MAGNETIC_GRASP, rank);
+  strength := dist / 50.0;
+  if strength > maxStrength then
+    strength := maxStrength;
 
-      victim.SetVelocity(
-        (player.x - victim.x) / dist * strength,
-        (player.y - victim.y) / dist * strength);
+  victim.SetVelocity(
+    (player.x - victim.x) / dist * strength,
+    (player.y - victim.y) / dist * strength);
 
-      player.WriteConsole(
-        'You activated Magnetic Grasp against ' + victim.name +
-        ' (cooldown ' + IntToStr(cd/60) + 's)', WHITE);
+  player.WriteConsole(
+    'You activated Magnetic Grasp against ' + victim.name +
+    ' (cooldown ' + IntToStr(cd/60) + 's)', WHITE);
 
-      victim.WriteConsole(
-        'You are pulled by ' + player.name + '''s Magnetic Grasp', LIGHTGREY);
-    end;
-  end;
+  victim.WriteConsole(
+    'You are pulled by ' + player.name + '''s Magnetic Grasp', LIGHTGREY);
 end;
 
-procedure UseBlindingFlash(var player, victim: TActivePlayer);
+procedure UseBlindingFlash(var player, victim: TActivePlayer; damage: Single);
 var
-  rank, cd, cdRemain, duration: Integer;
-  collision: Boolean;
+  rank, cd, duration: Integer;
 begin
   rank := PlayersData[player.ID].skillRanks[SKILL_BLINDING_FLASH];
 
-  if (rank > 0) and (player <> victim) and (victim.human) then
-  begin
-    cd := CooldownTicks(player, SKILL_BLINDING_FLASH);
-    cdRemain := CooldownTicksRemaining(player, SKILL_BLINDING_FLASH);
-    collision := RayCastPlayers(player, victim);
+  if rank <= 0 then exit;
+  if player = victim then exit;
+  if not victim.human then exit;
+  if CooldownTicksRemaining(player, SKILL_BLINDING_FLASH) > 0 then exit;
+  if RayCastPlayers(player, victim) then exit;
+  if not SkillProc(5, 100, 5, 150, damage) then exit;
 
-    if (cdRemain <= 0) and (not collision) then
-    begin
-      SetSkillLastUsedTick(player, SKILL_BLINDING_FLASH);
-      duration := Trunc(RankInterpolate(2*60, 3*60, SKILL_BLINDING_FLASH, rank));
+  SetSkillLastUsedTick(player, SKILL_BLINDING_FLASH);
 
-      FillScreen(victim, LAYER_FLASH, duration, WHITE);
+  cd := CooldownTicks(player, SKILL_BLINDING_FLASH);
+  duration := Trunc(RankInterpolate(2*60, 3*60, SKILL_BLINDING_FLASH, rank));
 
-      player.WriteConsole(
-        'You activated Blinding Flash against ' + victim.name +
-        ' (cooldown ' + IntToStr(cd/60) + 's)', WHITE);
+  FillScreen(victim, LAYER_FLASH, duration, WHITE);
 
-      victim.WriteConsole(
-        'You are blinded by ' + player.name + '''s Blinding Flash', LIGHTGREY);
-    end;
-  end;
+  player.WriteConsole(
+    'You activated Blinding Flash against ' + victim.name +
+    ' (cooldown ' + IntToStr(cd/60) + 's)', WHITE);
+
+  victim.WriteConsole(
+    'You are blinded by ' + player.name + '''s Blinding Flash', LIGHTGREY);
 end;
 
-procedure UseShock(var player, victim: TActivePlayer);
+procedure UseShock(var player, victim: TActivePlayer; damage: Single);
 var
-  rank, cd, cdRemain: Integer;
+  rank, cd: Integer;
   range, dist: Single;
   weap: TNewWeapon;
 begin
   rank := PlayersData[player.ID].skillRanks[SKILL_SHOCK];
 
-  if (rank > 0) and
-     (player <> victim) and
-     (victim.human) and
-     (victim.Primary.WType <> WTYPE_NOWEAPON) then
-  begin
-    cd := CooldownTicks(player, SKILL_SHOCK);
-    cdRemain := CooldownTicksRemaining(player, SKILL_SHOCK);
-    range := RankInterpolate(100, 200, SKILL_SHOCK, rank);
-    dist := Distance(player.x, player.y, victim.x, victim.y);
+  if rank <= 0 then exit;
+  if player = victim then exit;
+  if not victim.human then exit;
+  if victim.Primary.WType = WTYPE_NOWEAPON then exit;
+  if CooldownTicksRemaining(player, SKILL_SHOCK) > 0 then exit;
+  dist := Distance(player.x, player.y, victim.x, victim.y);
+  range := RankInterpolate(100, 200, SKILL_SHOCK, rank);
+  if dist > range then exit;
+  if not SkillProc(5, 100, 5, 100, damage) then exit;
 
-    if (cdRemain <= 0) and (dist < range) then
-    begin
-      SetSkillLastUsedTick(player, SKILL_SHOCK);
+  SetSkillLastUsedTick(player, SKILL_SHOCK);
 
-      weap := TNewWeapon.Create();
-      try
-        weap.WType := WTYPE_NOWEAPON;
-        victim.ForceWeapon(TWeapon(weap), player.secondary);
-      except finally
-        weap.Free();
-      end;
-
-      player.WriteConsole(
-        'You activated Shock to disarm ' + victim.name +
-        ' (cooldown ' + IntToStr(cd/60) + 's)', WHITE);
-
-      victim.WriteConsole(
-        'You are disarmed by ' + player.name + '''s Shock', LIGHTGREY);
-    end;
+  cd := CooldownTicks(player, SKILL_SHOCK);
+  weap := TNewWeapon.Create();
+  try
+    weap.WType := WTYPE_NOWEAPON;
+    victim.ForceWeapon(TWeapon(weap), player.secondary);
+  except finally
+    weap.Free();
   end;
+
+  player.WriteConsole(
+    'You activated Shock to disarm ' + victim.name +
+    ' (cooldown ' + IntToStr(cd/60) + 's)', WHITE);
+
+  victim.WriteConsole(
+    'You are disarmed by ' + player.name + '''s Shock', LIGHTGREY);
 end;
 
-procedure UseStormCharge(var player, victim: TActivePlayer);
+procedure UseStormCharge(var player, victim: TActivePlayer; damage: Single);
 var
-  rank, cd, cdRemain: Integer;
-  collision: Boolean;
+  rank, cd: Integer;
   dist: Single;
 begin
   rank := PlayersData[player.ID].skillRanks[SKILL_STORM_CHARGE];
 
-  if (rank > 0) and (player <> victim) and (victim.Primary.WType <> WTYPE_CHAINSAW) then
-  begin
-    cd := CooldownTicks(player, SKILL_STORM_CHARGE);
-    cdRemain := CooldownTicksRemaining(player, SKILL_STORM_CHARGE);
-    collision := RayCastPlayers(player, victim);
-    dist := Distance(player.x, player.y, victim.x, victim.y);
+  if rank <= 0 then exit;
+  if player = victim then exit;
+  if (victim.Primary.WType = WTYPE_CHAINSAW) or
+     (victim.Primary.WType = WTYPE_M249) then exit;
+  if CooldownTicksRemaining(player, SKILL_STORM_CHARGE) > 0 then exit;
+  if RayCastPlayers(player, victim) then exit;
+  dist := Distance(player.x, player.y, victim.x, victim.y);
+  if dist < 200 then exit;
+  if not SkillProc(20, 100, 20, 50, damage) then exit;
 
-    if (cdRemain <= 0) and (not collision) and (dist > 200) then
-    begin
-      SetSkillLastUsedTick(player, SKILL_STORM_CHARGE);
+  SetSkillLastUsedTick(player, SKILL_STORM_CHARGE);
 
-      player.SetVelocity(0, 0);
-      player.Move(
-        victim.x + (player.x - victim.x) * 25 / dist,
-        victim.y + (player.y - victim.y) * 25 / dist);
+  cd := CooldownTicks(player, SKILL_STORM_CHARGE);
 
-      player.WriteConsole(
-        'You activated Storm Charge against ' + victim.name +
-        ' (cooldown ' + IntToStr(cd/60) + 's)', WHITE);
-    end;
-  end;
+  player.SetVelocity(0, 0);
+  player.Move(
+    victim.x + (player.x - victim.x) * 25 / dist,
+    victim.y + (player.y - victim.y) * 25 / dist);
+
+  player.WriteConsole(
+    'You activated Storm Charge against ' + victim.name +
+    ' (cooldown ' + IntToStr(cd/60) + 's)', WHITE);
 end;
 
 procedure UseNova(var player, killer: TActivePlayer);

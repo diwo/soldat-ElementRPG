@@ -195,7 +195,8 @@ begin
   if player.IsAdmin then
   begin
     for i := 1 to 32 do
-      ResetPlayerCooldowns(Players[i]);
+      if Players[i].active and Players[i].human then
+        ResetPlayerCooldowns(Players[i]);
     player.WriteConsole('All player cooldowns reset!', YELLOW);
   end;
 end;

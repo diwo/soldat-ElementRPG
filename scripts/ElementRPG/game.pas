@@ -55,13 +55,6 @@ begin
       UseFlameBarrier(victim, shooter, dmgAdjusted);
   end;
 
-  UseStormCharge(shooter, victim);
-  UseMagicMissile(shooter, victim);
-  UseFireBlast(shooter, victim);
-  UseMagneticGrasp(shooter, victim);
-  UseBlindingFlash(shooter, victim);
-  UseShock(shooter, victim);
-
   if not shooter.human then
     dmgAdjusted := dmgAdjusted * 0.5;
 
@@ -72,6 +65,13 @@ begin
     dmgAdjusted := ApplyEarthenEmbrace(victim, dmgAdjusted);
   dmgAdjusted := ApplyCrystallineShield(victim, shooter, dmgAdjusted);
   dmgAdjusted := ApplySmokeScreen(victim, shooter, dmgAdjusted);
+
+  UseStormCharge(shooter, victim, dmgAdjusted);
+  UseMagicMissile(shooter, victim, dmgAdjusted);
+  UseFireBlast(shooter, victim, dmgAdjusted);
+  UseMagneticGrasp(shooter, victim, dmgAdjusted);
+  UseBlindingFlash(shooter, victim, dmgAdjusted);
+  UseShock(shooter, victim, dmgAdjusted);
 
   (* if (bulletId > 0) and (bulletId < 255) then *)
   (*   Debug( *)
